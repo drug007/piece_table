@@ -1,0 +1,6 @@
+name "piece_table"
+description "A piece table implementation"
+authors "drug007"
+copyright "Copyright © 2021, drug007"
+license "BSL"
+targetType "sourceLibrary"

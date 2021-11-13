@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/piece_table
+piece_table.so
+piece_table.dylib
+piece_table.dll
+piece_table.a
+piece_table.lib
+piece_table-test-*
+*.exe
+*.o
+*.obj
+*.lst
+/.vscode
