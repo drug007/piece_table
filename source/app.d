@@ -195,11 +195,11 @@ Span insert(Span firstSpan, Position posInSpan, Span interSpan)
 	auto lastSpan = span(firstSpan[posInSpan..$]);
 	firstSpan.content = firstSpan.content[0..posInSpan];
 
-	firstSpan.next = interSpan;
 	interSpan.prev = firstSpan;
 	interSpan.next = lastSpan;
 	lastSpan.prev = interSpan;
 	lastSpan.next = firstSpan.next;
+	firstSpan.next = interSpan;
 
 	return firstSpan;
 }
