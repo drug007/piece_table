@@ -52,6 +52,8 @@ auto span(Item[] content)
 extern(C++)
 class Sequence
 {
+	import std.typecons : Rebindable;
+
 	Span origin;
 
 	extern(D)
@@ -70,8 +72,6 @@ class Sequence
 
 	size_t walkLength() const
 	{
-		import std.typecons : Rebindable;
-
 		Rebindable!(const(Span)) s = origin;
 		size_t len;
 		while(s)
@@ -85,7 +85,6 @@ class Sequence
 
 	auto dump() const
 	{
-		import std.typecons : Rebindable;
 		Rebindable!(const Span) s = origin;
 		while(s)
 		{
@@ -94,6 +93,43 @@ class Sequence
 			s = s.next;
 		}
 	}
+
+	struct Range
+	{
+		this(const Span span)
+		{
+			_span = span;
+		}
+
+		bool empty() const
+		{
+			return _span is null;
+		}
+
+		Item front() const
+		{
+			assert(!empty);
+			return _span[_pos];
+		}
+
+		void popFront()
+		{
+			assert(!empty);
+			_pos++;
+			if (_pos == _span.length)
+			{
+				_pos = 0;
+				_span = _span.next;
+			}
+		}
+
+		private:
+			@disable this();
+			Rebindable!(const Span) _span;
+			Position _pos;
+	}
+
+	Range opSlice() { return Range(origin); }
 }
 
 auto sequence(Item[] content)
@@ -266,21 +302,15 @@ unittest
 	assert(s.itemAt(1) == 'e');
 	assert(s.itemAt(4) == 0);
 
+	import std.algorithm : equal;
+	assert(s[].equal("test"));
+
 	// insert in the end
 	{
 		s.insert(s.walkLength, span(" added"));
 
 		assert(s.walkLength == 10);
-		assert(s.itemAt( 0) == 't');
-		assert(s.itemAt( 1) == 'e');
-		assert(s.itemAt( 2) == 's');
-		assert(s.itemAt( 3) == 't');
-		assert(s.itemAt( 4) == ' ');
-		assert(s.itemAt( 5) == 'a');
-		assert(s.itemAt( 6) == 'd');
-		assert(s.itemAt( 7) == 'd');
-		assert(s.itemAt( 8) == 'e');
-		assert(s.itemAt( 9) == 'd');
+		assert(s[].equal("test added"));
 		assert(s.itemAt(10) == 0);
 	}
 
@@ -289,23 +319,7 @@ unittest
 		s.insert(0, span("prefix "));
 
 		assert(s.walkLength == 17);
-		assert(s.itemAt( 0) == 'p');
-		assert(s.itemAt( 1) == 'r');
-		assert(s.itemAt( 2) == 'e');
-		assert(s.itemAt( 3) == 'f');
-		assert(s.itemAt( 4) == 'i');
-		assert(s.itemAt( 5) == 'x');
-		assert(s.itemAt( 6) == ' ');
-		assert(s.itemAt( 7) == 't');
-		assert(s.itemAt( 8) == 'e');
-		assert(s.itemAt( 9) == 's');
-		assert(s.itemAt(10) == 't');
-		assert(s.itemAt(11) == ' ');
-		assert(s.itemAt(12) == 'a');
-		assert(s.itemAt(13) == 'd');
-		assert(s.itemAt(14) == 'd');
-		assert(s.itemAt(15) == 'e');
-		assert(s.itemAt(16) == 'd');
+		assert(s[].equal("prefix test added"));
 		assert(s.itemAt(17) == 0);
 	}
 
@@ -314,25 +328,7 @@ unittest
 		s.insert(11, span(" -"));
 
 		assert(s.walkLength == 19);
-		assert(s.itemAt( 0) == 'p');
-		assert(s.itemAt( 1) == 'r');
-		assert(s.itemAt( 2) == 'e');
-		assert(s.itemAt( 3) == 'f');
-		assert(s.itemAt( 4) == 'i');
-		assert(s.itemAt( 5) == 'x');
-		assert(s.itemAt( 6) == ' ');
-		assert(s.itemAt( 7) == 't');
-		assert(s.itemAt( 8) == 'e');
-		assert(s.itemAt( 9) == 's');
-		assert(s.itemAt(10) == 't');
-		assert(s.itemAt(11) == ' ');
-		assert(s.itemAt(12) == '-');
-		assert(s.itemAt(13) == ' ');
-		assert(s.itemAt(14) == 'a');
-		assert(s.itemAt(15) == 'd');
-		assert(s.itemAt(16) == 'd');
-		assert(s.itemAt(17) == 'e');
-		assert(s.itemAt(18) == 'd');
+		assert(s[].equal("prefix test - added"));
 		assert(s.itemAt(19) == 0);
 	}
 }
