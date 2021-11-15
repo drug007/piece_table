@@ -294,41 +294,40 @@ Item itemAt(Sequence s, Position p)
 
 unittest
 {
-	auto s = sequence("test");
-	assert(s.walkLength == 4);
+	auto s = sequence("two");
+	assert(s.walkLength == 3);
 	assert(s.itemAt(0) == 't');
-	assert(s.itemAt(3) == 't');
-	assert(s.itemAt(2) == 's');
-	assert(s.itemAt(1) == 'e');
-	assert(s.itemAt(4) == 0);
+	assert(s.itemAt(1) == 'w');
+	assert(s.itemAt(2) == 'o');
+	assert(s.itemAt(3) == 0);
 
 	import std.algorithm : equal;
-	assert(s[].equal("test"));
+	assert(s[].equal("two"));
 
 	// insert in the end
 	{
-		s.insert(s.walkLength, span(" added"));
+		s.insert(s.walkLength, span(" four"));
 
-		assert(s.walkLength == 10);
-		assert(s[].equal("test added"));
-		assert(s.itemAt(10) == 0);
+		assert(s.walkLength == 8);
+		assert(s[].equal("two four"));
+		assert(s.itemAt(8) == 0);
 	}
 
 	// insert in the beginning
 	{
-		s.insert(0, span("prefix "));
+		s.insert(0, span("one "));
 
-		assert(s.walkLength == 17);
-		assert(s[].equal("prefix test added"));
-		assert(s.itemAt(17) == 0);
+		assert(s.walkLength == 12);
+		assert(s[].equal("one two four"));
+		assert(s.itemAt(12) == 0);
 	}
 
 	// insert in the middle
 	{
-		s.insert(11, span(" -"));
+		s.insert(7, span(" three"));
 
-		assert(s.walkLength == 19);
-		assert(s[].equal("prefix test - added"));
-		assert(s.itemAt(19) == 0);
+		assert(s.walkLength == 18);
+		assert(s[].equal("one two three four"));
+		assert(s.itemAt(18) == 0);
 	}
 }
