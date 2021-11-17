@@ -229,6 +229,10 @@ Sequence insert(Sequence seq, Position posInSeq, Span insertSpan)
 
 Span remove(Span s, Position p)
 {
+	// if the position is out of any span
+	// return nothing // shouldn't it be an error?
+
+	// the position can be in the beginning, in the middle or in the end of a sequence/span
 	assert(0);
 }
 
