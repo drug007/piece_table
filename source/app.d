@@ -1,9 +1,46 @@
-
+import std.experimental.allocator.mmap_allocator;
 import std.stdio;
 
 struct Descriptor
 {
 
+}
+
+unittest
+{
+	auto i = readln;
+	writeln(i);
+	auto alloc = MmapAllocator.instance;
+	void[] buf = alloc.allocate(1*1024*1024*1024);
+	void[] buf2, buf3, buf4, buf5;
+	writeln(buf.ptr);
+	auto len = buf.length;
+	{
+		buf2 = alloc.allocate(1*1024*1024*1024);
+		writeln(buf2.ptr);
+		len += buf.length;
+	}
+	{
+		buf3 = alloc.allocate(1*1024*1024*1024);
+		writeln(buf3.ptr);
+		len += buf.length;
+	}
+	{
+		buf4 = alloc.allocate(1*1024*1024*1024);
+		writeln(buf4.ptr);
+		len += buf.length;
+	}
+	{
+		buf5 = alloc.allocate(1*1024*1024*1024);
+		writeln(buf5.ptr);
+		len += buf.length;
+	}
+	i = readln;
+	writeln(i);
+	writefln("total length: %s Mib", len/1024/1024);
+	(cast(ubyte*)buf.ptr)[len-10] = 255;
+	i = readln;
+	writeln(i);
 }
 
 alias Position = size_t;
@@ -292,7 +329,7 @@ Item itemAt(Sequence s, Position p)
 //  // insert/deletion at the beginning, in the middle and at the end
 // }
 
-unittest
+version(none) unittest
 {
 	auto s = sequence("two");
 	assert(s.walkLength == 3);
